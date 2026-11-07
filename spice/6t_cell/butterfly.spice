@@ -1,0 +1,41 @@
+* 6T SRAM cell: read butterfly curve (read static noise margin) vs temperature
+*
+* Starter deck for learning. One half-cell (inverter + access transistor) is
+* swept. During a read, WL and the bitline are both at VDD, which pulls up on
+* the storage node and weakens the cell. The read SNM is the side of the
+* largest square that fits inside the two lobes of the butterfly. Plot
+* v(q) vs v(qb_in) and the same curve mirrored about y = x.
+*
+* NOTE: these are ordinary logic-rule devices sized by hand, NOT the SKY130
+* foundry bitcell (that uses special SRAM rules and is much smaller). Good for
+* intuition, not for area.
+*
+* Run:  make spice     (inside the EDA container)
+
+.lib /foss/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+
+.param VDD=1.8
+* Sizes in um. Cell ratio = W_pd / W_pg = 2 (read stability).
+.param W_pd=0.84 W_pg=0.42 W_pu=0.42 L=0.15
+
+Vdd  vdd 0 {VDD}
+Vwl  wl  0 {VDD}      ; word line on (read)
+Vbl  bl  0 {VDD}      ; bitline precharged high
+Vin  qb_in 0 0        ; swept: the other storage node
+
+* inverter: input qb_in, output q
+Xpu q qb_in vdd vdd sky130_fd_pr__pfet_01v8 w={W_pu} l={L}
+Xpd q qb_in 0   0   sky130_fd_pr__nfet_01v8 w={W_pd} l={L}
+* access transistor: q <-> bl, gate = wl
+Xpg q wl bl 0 sky130_fd_pr__nfet_01v8 w={W_pg} l={L}
+
+.control
+foreach t -40 27 100
+  option temp = $t
+  dc Vin 0 1.8 0.005
+  wrdata build/spice/butterfly_{$t}C.txt v(q)
+end
+quit
+.endc
+
+.end
