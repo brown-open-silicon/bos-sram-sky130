@@ -30,11 +30,15 @@ Xpd q qb_in 0   0   sky130_fd_pr__nfet_01v8 w={W_pd} l={L}
 Xpg q wl bl 0 sky130_fd_pr__nfet_01v8 w={W_pg} l={L}
 
 .control
-foreach t -40 27 100
-  option temp = $t
-  dc Vin 0 1.8 0.005
-  wrdata build/spice/butterfly_{$t}C.txt v(q)
-end
+option temp = -40
+dc Vin 0 1.8 0.005
+wrdata build/spice/butterfly_-40C.txt v(q)
+option temp = 27
+dc Vin 0 1.8 0.005
+wrdata build/spice/butterfly_27C.txt v(q)
+option temp = 100
+dc Vin 0 1.8 0.005
+wrdata build/spice/butterfly_100C.txt v(q)
 quit
 .endc
 

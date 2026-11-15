@@ -22,6 +22,14 @@ spec/sram_spec.md ──── the contract (flagship + SRAM team both follow it
 
 Every version has the same ports, so the flagship never rewires anything.
 
+## Setup (new members)
+
+1. Install Docker Desktop and pull `hpretl/iic-osic-tools:chipathon26` (about 20 GB free disk needed).
+2. Clone this repo into your designs folder (`C:\Users\<you>\eda\designs` on Windows, `~/eda/designs` on Mac). Inside the container it is `/foss/designs/bos-sram-sky130`.
+3. Copy `setup/designinit` to `eda/designs/.designinit` (one level above this repo) so the container starts on sky130A. Restart the container.
+4. Check: `echo $PDK` prints `sky130A`, and `python3 tb/run.py` passes 8 tests.
+5. First Xschem example: `cd /foss/designs/bos-sram-sky130/xschem/inverter && xschem TB_inv1.sch`, then Netlist and Simulate. sky130 model loading takes 2 to 5 minutes per simulation.
+
 ## Quick start
 
 Needs Docker with `hpretl/iic-osic-tools` (SKY130 PDK, iverilog, cocotb, ngspice, OpenRAM).
@@ -46,6 +54,8 @@ No Docker? `make sim-local` works with `iverilog` and `pip install cocotb`.
 | `openram/config_256x32_1rw1r.py` | OpenRAM config for the baseline macro |
 | `spice/6t_cell/` | Starter ngspice deck: one 6T cell, read butterfly vs temperature |
 | `scripts/eda.sh` | Runs any command in the EDA container with `PDK=sky130A` |
+| `setup/designinit` | Copy to `eda/designs/.designinit` to make sky130A the container default |
+| `xschem/inverter/` | sky130 inverter + testbench: the first Xschem exercise |
 
 ## Using it in the flagship
 
